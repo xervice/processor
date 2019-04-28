@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+
+<DataProviders
+  xmlns="xervice:dataprovider-01"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="xervice:dataprovider-01 http://static.xervice.online/schema/dataprovider.schema.xsd"
+>
+
+    <DataProvider name="ProcessRun">
+        <DataElement name="Name" type="string"/>
+        <DataElement name="Input" allownull="true" type="string"/>
+        <DataElement name="Output" allownull="true" type="string"/>
+    </DataProvider>
+
+</DataProviders>
