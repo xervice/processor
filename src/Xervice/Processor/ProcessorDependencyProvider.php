@@ -62,7 +62,7 @@ class ProcessorDependencyProvider extends AbstractDependencyProvider
     protected function addValidatorFacade(DependencyContainerInterface $container): DependencyContainerInterface
     {
         $container[static::VALIDATOR_FACADE] = function (DependencyContainerInterface $container) {
-            return $this->getLocator()->validator()->facade();
+            return $container->getLocator()->validator()->facade();
         };
         return $container;
     }

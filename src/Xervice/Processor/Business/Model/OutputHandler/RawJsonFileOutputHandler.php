@@ -21,7 +21,7 @@ class RawJsonFileOutputHandler implements OutputHandlerInterface
      */
     public function init(ProcessRunDataProvider $runDataProvider): void
     {
-        $this->handler = fopen($runDataProvider, 'w');
+        $this->handler = fopen($runDataProvider->getOutput(), 'w');
         $this->validateHandler();
     }
 

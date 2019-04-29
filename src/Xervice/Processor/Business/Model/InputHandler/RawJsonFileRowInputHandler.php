@@ -38,7 +38,8 @@ class RawJsonFileRowInputHandler implements InputHandlerInterface
     {
         $this->eof = true;
         return json_decode(
-            fgets($this->handler)
+            fgets($this->handler),
+            true
         );
     }
 

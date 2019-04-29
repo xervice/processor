@@ -17,8 +17,6 @@ class TranslatorFieldHandlerPlugin implements FieldHandlerPluginInterface
      */
     public function handleSimpleConfig(array $data, string $fieldName, string $config): array
     {
-        $data[$fieldName] = $data[$config] ?? null;
-
         return $data;
     }
 
@@ -31,7 +29,7 @@ class TranslatorFieldHandlerPlugin implements FieldHandlerPluginInterface
      */
     public function handleNestedConfig(array $data, string $fieldName, array $config): array
     {
-        $data[$fieldName] = $config;
+        $data[$fieldName] = $data[$config['field']];
 
         return $data;
     }
@@ -46,5 +44,7 @@ class TranslatorFieldHandlerPlugin implements FieldHandlerPluginInterface
     public function handleCallableConfig(array $data, string $fieldName, callable $config): array
     {
         $data[$fieldName] = $config($data);
+
+        return $data;
     }
 }

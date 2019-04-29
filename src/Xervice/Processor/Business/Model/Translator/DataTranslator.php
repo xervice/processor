@@ -43,7 +43,7 @@ class DataTranslator implements DataTranslatorInterface
             $data = $this->arrayHandlerFacade->handleArray(
                 $this->translateFieldHandler,
                 $data,
-                $translatorConfigPlugin->getHydratorConfiguration()
+                $translatorConfigPlugin->getTranslationConfiguration()
             );
         }
 

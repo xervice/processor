@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace XerviceTest\Process\Business\Model\Processor\Helper;
+namespace XerviceTest\Process\Helper;
 
 
 use Xervice\Processor\Business\Dependency\ProcessConfigurationPluginInterface;
@@ -9,6 +9,9 @@ use Xervice\Processor\Business\Model\InputHandler\InputHandlerInterface;
 use Xervice\Processor\Business\Model\InputHandler\RawJsonFileRowInputHandler;
 use Xervice\Processor\Business\Model\OutputHandler\OutputHandlerInterface;
 use Xervice\Processor\Business\Model\OutputHandler\RawJsonFileOutputHandler;
+use XerviceTest\Process\Helper\Models\TestHydrator;
+use XerviceTest\Process\Helper\Models\TestTranslator;
+use XerviceTest\Process\Helper\Models\TestValidator;
 
 class ProcessConfiguration implements ProcessConfigurationPluginInterface
 {
@@ -37,11 +40,13 @@ class ProcessConfiguration implements ProcessConfigurationPluginInterface
     }
 
     /**
-     * @return \Xervice\Processor\Business\Model\ProcessWorker\ProcessWorkerInterface[]
+     * @param array $data
+     *
+     * @return array
      */
-    public function getProcessWorkers(): array
+    public function process(array $data): array
     {
-        return [];
+        return $data;
     }
 
     /**
@@ -49,17 +54,9 @@ class ProcessConfiguration implements ProcessConfigurationPluginInterface
      */
     public function getValidatorConfigurationPlugins(): array
     {
-        return [];
-    }
-
-    /**
-     * @param array $data
-     *
-     * @return array
-     */
-    public function process(array $data): array
-    {
-        // TODO: Implement process() method.
+        return [
+            new TestValidator()
+        ];
     }
 
     /**
@@ -67,7 +64,9 @@ class ProcessConfiguration implements ProcessConfigurationPluginInterface
      */
     public function getHydratorPlugins(): array
     {
-        // TODO: Implement getHydratorPlugins() method.
+        return [
+            new TestHydrator()
+        ];
     }
 
     /**
@@ -75,6 +74,8 @@ class ProcessConfiguration implements ProcessConfigurationPluginInterface
      */
     public function getTranslatorPlugins(): array
     {
-        // TODO: Implement getTranslatorPlugins() method.
+        return [
+            new TestTranslator()
+        ];
     }
 }

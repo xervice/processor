@@ -3,6 +3,8 @@
 use Codeception\Test\Unit;
 use DataProvider\ProcessRunDataProvider;
 
+require dirname(__DIR__) . '/Overwriter/ProcessorDependencyProvider.php';
+
 /**
  * @method \Xervice\Processor\Business\ProcessorFacade getFacade()
  */
@@ -34,7 +36,8 @@ class ProcessFacadeTest extends Unit
                     'test' => [
                         'var1',
                         'var2'
-                    ]
+                    ],
+
                 ]
             )
         );
@@ -46,6 +49,13 @@ class ProcessFacadeTest extends Unit
         @unlink($this->outputFile);
     }
 
+    /**
+     * @group Xervice
+     * @group Processor
+     * @group Business
+     * @group ProcessorFacade
+     * @group Integration
+     */
     public function testRunProcess()
     {
         $conf = (new ProcessRunDataProvider())
@@ -58,18 +68,37 @@ class ProcessFacadeTest extends Unit
         $this->assertFileExists($this->outputFile);
 
         $content = file_get_contents($this->outputFile);
-        $content = json_decode($content);
+        $content = json_decode($content, true);
 
         $this->assertEquals(
             [
-                [
-                    'value' => 'var1'
+                "newValues" => [
+                    [
+                        "var1"
+                    ],
+                    [
+                        "var2"
+                    ]
                 ],
-                [
-                    'value' => 'var2'
+                "transOne" => [
+                    [
+                        "var1"
+                    ],
+                    [
+                        "var2"
+                    ]
+                ],
+                "transTwo" => [
+                    [
+                        "var1"
+                    ],
+                    [
+                        "var2"
+                    ]
                 ]
             ],
             $content
         );
+
     }
 }

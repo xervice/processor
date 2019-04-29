@@ -17,7 +17,7 @@ class HydratorFieldHandlerPlugin implements FieldHandlerPluginInterface
      */
     public function handleSimpleConfig(array $data, string $fieldName, string $config): array
     {
-        $data[$fieldName] = $config;
+        unset($data[$fieldName]);
 
         return $data;
     }
@@ -31,7 +31,7 @@ class HydratorFieldHandlerPlugin implements FieldHandlerPluginInterface
      */
     public function handleNestedConfig(array $data, string $fieldName, array $config): array
     {
-        $data[$fieldName] = $config;
+        $data[$fieldName] = $config['value'];
 
         return $data;
     }
@@ -45,7 +45,7 @@ class HydratorFieldHandlerPlugin implements FieldHandlerPluginInterface
      */
     public function handleCallableConfig(array $data, string $fieldName, callable $config): array
     {
-        $data[$fieldName] = $config($data[$fieldName]);
+        $data[$fieldName] = $config($data);
 
         return $data;
     }
