@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Xervice\Processor\Communication\Console;
 
 
+use DataProvider\ProcessRunDataProvider;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -35,6 +36,11 @@ class RunProcessCommand extends AbstractCommand
         $inputFile = $input->getOption('input');
         $outputFile = $input->getOption('output');
 
-        //TODO: Must be implemented
+        $process = (new ProcessRunDataProvider())
+            ->setName($processName)
+            ->setInput($inputFile)
+            ->setOutput($outputFile);
+
+        $this->getFacade()->runProcess($process);
     }
 }
