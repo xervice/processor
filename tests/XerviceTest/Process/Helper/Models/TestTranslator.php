@@ -15,11 +15,13 @@ class TestTranslator implements ProcessTranslationPluginInterface
     {
         return [
             [
-                'transOne' => [
-                    'field' => 'newValues'
+                'TestTranslator',
+                'TestTranslator' => [
+                    'field' => 'transOne',
+                    'source' => 'newValues'
                 ],
                 'transTwo' => function (array $payload) {
-                    return $payload['transOne'];
+                    return $payload['transOne'] ?? null;
                 }
             ]
         ];

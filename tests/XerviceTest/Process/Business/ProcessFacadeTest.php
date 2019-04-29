@@ -98,7 +98,8 @@ class ProcessFacadeTest extends Unit
                         "var2"
                     ]
                 ],
-                'isProcessed' => true
+                'isProcessed' => true,
+                'isTranslated' => 2
             ],
             $content
         );

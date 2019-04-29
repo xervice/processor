@@ -64,7 +64,9 @@ class ProcessorBusinessFactory extends AbstractBusinessFactory
      */
     public function createTranslatorFieldHandlerPlugin(): FieldHandlerPluginInterface
     {
-        return new TranslatorFieldHandlerPlugin();
+        return new TranslatorFieldHandlerPlugin(
+            $this->getTranslatorFunctions()
+        );
     }
 
     /**
@@ -81,6 +83,14 @@ class ProcessorBusinessFactory extends AbstractBusinessFactory
     public function getProcessConfigurationPluginCollection(): ProcessConfigurationPluginCollection
     {
         return $this->getDependency(ProcessorDependencyProvider::PROCESS_PLUGINS);
+    }
+
+    /**
+     * @return \Xervice\Processor\Business\Model\Translator\TranslatorInterface[]
+     */
+    public function getTranslatorFunctions(): array
+    {
+        return $this->getDependency(ProcessorDependencyProvider::TRANSLATOR_FUNCTIONS);
     }
 
     /**

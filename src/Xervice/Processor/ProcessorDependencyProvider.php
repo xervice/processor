@@ -14,6 +14,7 @@ use Xervice\Processor\Business\Model\Processor\ProcessConfigurationPluginCollect
 class ProcessorDependencyProvider extends AbstractDependencyProvider
 {
     public const PROCESS_PLUGINS      = 'processor.process.plugins';
+    public const TRANSLATOR_FUNCTIONS = 'processor.translator.function';
     public const VALIDATOR_FACADE     = 'processor.validator.facade';
     public const ARRAY_HANDLER_FACADE = 'processor.array.handler.facade';
 
@@ -25,6 +26,7 @@ class ProcessorDependencyProvider extends AbstractDependencyProvider
     public function handleDependencies(DependencyContainerInterface $container): DependencyContainerInterface
     {
         $container = $this->addProcessConfigurationPluginCollection($container);
+        $container = $this->addTranslatorFunctions($container);
         $container = $this->addValidatorFacade($container);
         $container = $this->addArrayHandlerFacade($container);
 
@@ -55,6 +57,14 @@ class ProcessorDependencyProvider extends AbstractDependencyProvider
     }
 
     /**
+     * @return \Xervice\Processor\Business\Model\Translator\TranslatorInterface[]
+     */
+    protected function getTranslatorFunctions(): array
+    {
+        return [];
+    }
+
+    /**
      * @param \Xervice\Core\Business\Model\Dependency\DependencyContainerInterface $container
      *
      * @return \Xervice\Core\Business\Model\Dependency\DependencyContainerInterface
@@ -64,6 +74,7 @@ class ProcessorDependencyProvider extends AbstractDependencyProvider
         $container[static::VALIDATOR_FACADE] = function (DependencyContainerInterface $container) {
             return $container->getLocator()->validator()->facade();
         };
+        
         return $container;
     }
 
@@ -77,6 +88,21 @@ class ProcessorDependencyProvider extends AbstractDependencyProvider
         $container[static::ARRAY_HANDLER_FACADE] = function (DependencyContainerInterface $container) {
             return $container->getLocator()->arrayHandler()->facade();
         };
+
+        return $container;
+    }
+
+    /**
+     * @param \Xervice\Core\Business\Model\Dependency\DependencyContainerInterface $container
+     *
+     * @return \Xervice\Core\Business\Model\Dependency\DependencyContainerInterface
+     */
+    protected function addTranslatorFunctions(DependencyContainerInterface $container): DependencyContainerInterface
+    {
+        $container[static::TRANSLATOR_FUNCTIONS] = function (DependencyContainerInterface $container) {
+            return $this->getTranslatorFunctions();
+        };
+
         return $container;
     }
 }

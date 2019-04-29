@@ -4,10 +4,10 @@ declare(strict_types=1);
 namespace App\Processor;
 
 
-use Xervice\Processor\ProcessorDependencyProvider as XerviceProcessorDependencyProvider;
+use XerviceTest\Process\Helper\Models\TestTranslatorFunction;
 use XerviceTest\Process\Helper\ProcessConfiguration;
 
-class ProcessorDependencyProvider extends XerviceProcessorDependencyProvider
+class ProcessorDependencyProvider extends \Xervice\Processor\ProcessorDependencyProvider
 {
     /**
      * @return \Xervice\Processor\Business\Dependency\ProcessConfigurationPluginInterface[]
@@ -16,6 +16,16 @@ class ProcessorDependencyProvider extends XerviceProcessorDependencyProvider
     {
         return [
             new ProcessConfiguration()
+        ];
+    }
+
+    /**
+     * @return \Xervice\Processor\Business\Model\Translator\TranslatorInterface[]
+     */
+    protected function getTranslatorFunctions(): array
+    {
+        return [
+            new TestTranslatorFunction()
         ];
     }
 }

@@ -117,7 +117,7 @@ class TestHydrator implements ProcessHydratorPluginInterface
 
 ### Translating
 After hydrating the information you can translate them into your needed structure. For that you can add translate plugins to your process configuration.
-Syntax is also based on the xervice/array-handler module.
+Syntax is also based on the xervice/array-handler module. Here you can define TranslationFunction. You can add new TranslationFunctions to the ProcessorDependencyProvider.
 
 ```php
     /**
@@ -141,13 +141,77 @@ class TestTranslator implements ProcessTranslationPluginInterface
     {
         return [
             [
-                'transOne' => [
-                    'field' => 'newValues'
+                'TestTranslator',
+                'TestTranslator' => [
+                    'field' => 'transOne',
+                    'source' => 'newValues'
                 ],
                 'transTwo' => function (array $payload) {
-                    return $payload['transOne'];
+                    return $payload['transOne'] ?? null;
                 }
             ]
+        ];
+    }
+}
+```
+
+```php
+use Xervice\Processor\Business\Model\Translator\TranslatorInterface;
+
+class TestTranslatorFunction implements TranslatorInterface
+{
+    /**
+     * @return string
+     */
+    public function getName(): string
+    {
+        return 'TestTranslator';
+    }
+
+    /**
+     * @param array $payload
+     * @param array $options
+     *
+     * @return array
+     */
+    public function translate(array $payload, array $options = null): array
+    {
+        if (!isset($payload['isTranslated'])) {
+            $payload['isTranslated'] = 0;
+        }
+
+        $payload['isTranslated']++;
+
+        if (is_array($options)) {
+            $payload[$options['field']] = $payload[$options['source']];
+        }
+
+        return $payload;
+    }
+
+}
+```
+
+```php
+class ProcessorDependencyProvider extends \Xervice\Processor\ProcessorDependencyProvider
+{
+    /**
+     * @return \Xervice\Processor\Business\Dependency\ProcessConfigurationPluginInterface[]
+     */
+    protected function getProcessConfigurationPlugins(): array
+    {
+        return [
+            new ProcessConfiguration()
+        ];
+    }
+
+    /**
+     * @return \Xervice\Processor\Business\Model\Translator\TranslatorInterface[]
+     */
+    protected function getTranslatorFunctions(): array
+    {
+        return [
+            new TestTranslatorFunction()
         ];
     }
 }
