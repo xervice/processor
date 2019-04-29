@@ -1,22 +1,194 @@
-Processor
-=====================
+# Processor
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/xervice/processor/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/xervice/processor/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/xervice/processor/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/xervice/processor/?branch=master)
 
-Installation
------------------
+## Installation
 ```
 composer require xervice/processor
 ```
 
-Configuration
------------------
-You must create a new process configuration class implementing \Xervice\Processor\Business\Dependency\ProcessConfigurationPluginInterface.
+## Configuration
+You must create a new process configuration plugin implementing \Xervice\Processor\Business\Dependency\ProcessConfigurationPluginInterface.
 That class you have to register in the ProcessorDependencyProvider to add your process.
 
-Using
------------------
+A process is a data livecycle with the following steps:
+1. Read input
+2. Validate data
+3. Hydrate data
+4. Translate data
+5. Process data
+6. Write data
+
+All login for the given steps can be configured in the process configuration plugin.
+
+### Read input
+You can define an InputHandler in your process configuration to read the data.
+
+```php
+    /**
+     * @return \Xervice\Processor\Business\Model\InputHandler\InputHandlerInterface
+     */
+    public function getInputHandler(): InputHandlerInterface
+    {
+        return new RawJsonFileRowInputHandler();
+    }
+```
+
+### Validate data
+For validating you can add one or more ValidatorPlugins to your process configuration to validate your data. The config syntax is based on the xervice/validator module.
+
+```php
+    /**
+     * @return \Xervice\Validator\Business\Dependency\ValidatorConfigurationProviderPluginInterface[]
+     */
+    public function getValidatorConfigurationPlugins(): array
+    {
+        return [
+            new TestValidator()
+        ];
+    }
+```
+
+```php
+    class TestValidator implements ValidatorConfigurationProviderPluginInterface
+    {
+        /**
+         * @return array
+         */
+        public function getValidatorConfiguration(): array
+        {
+            return [
+                [
+                    'test' => [
+                        'required' => true,
+                        'type' => IsType::TYPE_ARRAY
+                    ]
+                ]
+            ];
+        }
+    
+    }
+```
+
+### Hydrating
+
+After your data is validated you can hydrate the information by adding HydratePlugins to your process configuration. Syntax of the configuration is based on the xervice/array-handler module.  
+Giving only the fieldname in the config will remove this entry from the data.
+
+```php
+    /**
+     * @return \Xervice\Processor\Business\Dependency\ProcessHydratorPluginInterface[]
+     */
+    public function getHydratorPlugins(): array
+    {
+        return [
+            new TestHydrator()
+        ];
+    }
+```
+
+```php
+class TestHydrator implements ProcessHydratorPluginInterface
+{
+    /**
+     * @return array
+     */
+    public function getHydratorConfiguration(): array
+    {
+        return [
+            [
+                'newValues' => function (array $payload) {
+                    return [
+                        [
+                            $payload['test'][0]
+                        ],
+                        [
+                            $payload['test'][1]
+                        ]
+                    ];
+                },
+                'test'
+            ]
+        ];
+    }
+}
+```
+
+### Translating
+After hydrating the information you can translate them into your needed structure. For that you can add translate plugins to your process configuration.
+Syntax is also based on the xervice/array-handler module.
+
+```php
+    /**
+     * @return \Xervice\Processor\Business\Dependency\ProcessTranslationPluginInterface[]
+     */
+    public function getTranslatorPlugins(): array
+    {
+        return [
+            new TestTranslator()
+        ];
+    }
+```
+
+```php
+class TestTranslator implements ProcessTranslationPluginInterface
+{
+    /**
+     * @return array
+     */
+    public function getTranslationConfiguration(): array
+    {
+        return [
+            [
+                'transOne' => [
+                    'field' => 'newValues'
+                ],
+                'transTwo' => function (array $payload) {
+                    return $payload['transOne'];
+                }
+            ]
+        ];
+    }
+}
+```
+
+
+### Processing
+
+Processing the data is the jump into your module business logic. For that you've a hook method in your process configuration. The return value is data payload you want to write.
+
+```php
+    /**
+     * @param array $data
+     *
+     * @return array
+     */
+    public function process(array $data): array
+    {
+        $data['isProcessed'] = true;
+        // $this->getFacade()->processYourOwnData($data);
+
+        return $data;
+    }
+```
+
+### Write data
+
+At the end the data will be given to your OutputHandler to persist them. You can define the OutputHandler in your process configuration.
+
+```php
+    /**
+     * @return \Xervice\Processor\Business\Model\OutputHandler\OutputHandlerInterface
+     */
+    public function getOutputHandler(): OutputHandlerInterface
+    {
+        return new RawJsonFileOutputHandler();
+    }
+```
+
+
+## Using
 You can run a process by using the console command:  
 
 ```
