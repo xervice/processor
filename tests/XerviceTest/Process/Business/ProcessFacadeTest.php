@@ -2,6 +2,8 @@
 
 use Codeception\Test\Unit;
 use DataProvider\ProcessRunDataProvider;
+use Xervice\Processor\Business\Exception\ProcessException;
+use Xervice\Processor\Business\Exception\ProcessNotFoundException;
 
 require dirname(__DIR__) . '/Overwriter/ProcessorDependencyProvider.php';
 
@@ -101,5 +103,45 @@ class ProcessFacadeTest extends Unit
             $content
         );
 
+    }
+
+    /**
+     * @group Xervice
+     * @group Processor
+     * @group Business
+     * @group ProcessorFacade
+     * @group Integration
+     */
+    public function testProcessWithFailedValidation()
+    {
+        file_put_contents($this->inputFile, json_encode([]));
+
+        $conf = (new ProcessRunDataProvider())
+            ->setName('TEST_PROCESS')
+            ->setInput($this->inputFile)
+            ->setOutput($this->outputFile);
+
+        $this->expectException(ProcessException::class);
+        $this->expectExceptionMessage('Data are invalid. Validation is failed');
+
+        $this->tester->getFacade()->runProcess($conf);
+    }
+
+    /**
+     * @group Xervice
+     * @group Processor
+     * @group Business
+     * @group ProcessorFacade
+     * @group Integration
+     */
+    public function testRunNotExistingProcess()
+    {
+        $this->expectException(ProcessNotFoundException::class);
+        $this->expectExceptionMessage('No process found with name NOT_EXIST_PROCESS');
+
+        $conf = (new ProcessRunDataProvider())
+            ->setName('NOT_EXIST_PROCESS');
+
+        $this->tester->getFacade()->runProcess($conf);
     }
 }
