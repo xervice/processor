@@ -46,6 +46,8 @@ class ProcessConfiguration implements ProcessConfigurationPluginInterface
      */
     public function process(array $data): array
     {
+        $data['isProcessed'] = true;
+
         return $data;
     }
 

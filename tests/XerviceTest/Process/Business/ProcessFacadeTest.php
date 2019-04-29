@@ -95,7 +95,8 @@ class ProcessFacadeTest extends Unit
                     [
                         "var2"
                     ]
-                ]
+                ],
+                'isProcessed' => true
             ],
             $content
         );
